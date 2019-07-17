@@ -17,7 +17,10 @@
 package net.fabricmc.fabric.mixin.eventsinteraction;
 
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.DropItemCallback;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -25,6 +28,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerEntity.class)
 public class MixinServerPlayerEntity {
@@ -36,4 +40,14 @@ public class MixinServerPlayerEntity {
 			info.cancel();
 		}
 	}
+
+	@Inject(method = "dropItem", at	= @At("HEAD"), cancellable = true)
+	public void onPlayerDropItem(final ItemStack stack, final boolean isThrown, final boolean hasOwner, final CallbackInfoReturnable<ItemEntity> info) {
+		ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
+		ActionResult result = DropItemCallback.EVENT.invoker().interact(player, stack);
+		if(result == ActionResult.FAIL) {
+			info.cancel();
+		}
+	}
+
 }

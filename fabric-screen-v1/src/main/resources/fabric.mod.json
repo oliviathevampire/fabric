@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "fabric-screen-v1",
+  "version": "${version}",
+  "license": "Apache-2.0",
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "fabric-api-base": "*"
+  },
+  "entrypoints": {},
+  "mixins": [
+    "fabric-screen-v1.mixins.json"
+  ],
+  "name": "Fabric Screen (v1)",
+  "description": "Hooks for creating screens",
+  "contact": {
+    "homepage": "https://fabricmc.net",
+    "irc": "irc://irc.esper.net:6667/fabric",
+    "issues": "https://github.com/FabricMC/fabric/issues",
+    "sources": "https://github.com/FabricMC/fabric"
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "fabric"
+  }
+}

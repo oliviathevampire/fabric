@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "fabric-gamerules-v1",
+  "version": "${version}",
+  "license": "Apache-2.0",
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "fabric-api-base": "*"
+  },
+  "mixins": [
+    "fabric-gamerules-v1.mixins.json"
+  ],
+  "name": "Fabric Gamerules (v1)",
+  "description": "Adds a way to add custom gamerules.",
+  "contact": {
+    "homepage": "https://fabricmc.net",
+    "irc": "irc://irc.esper.net:6667/fabric",
+    "issues": "https://github.com/FabricMC/fabric/issues",
+    "sources": "https://github.com/FabricMC/fabric"
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "fabric"
+  }
+}

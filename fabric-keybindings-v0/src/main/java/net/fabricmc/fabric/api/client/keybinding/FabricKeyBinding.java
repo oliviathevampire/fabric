@@ -21,6 +21,8 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 
+import java.util.Objects;
+
 /**
  * Expanded version of {@link KeyBinding} for use by Fabric mods.
  * <p>
@@ -28,8 +30,16 @@ import net.minecraft.util.Identifier;
  * {@link KeyBindingRegistry#register(FabricKeyBinding)}!
  */
 public class FabricKeyBinding extends KeyBinding {
+
+	private final Identifier id;
+
 	protected FabricKeyBinding(Identifier id, InputUtil.Type type, int code, String category) {
-		super("key." + id.toString().replace(':', '.'), type, code, category);
+		super(formatKeyName(id), type, code, category);
+		this.id = id;
+	}
+
+	public static String formatKeyName(final Identifier id) {
+		return String.format("key.%s.%s", id.getNamespace(), id.getPath());
 	}
 
 	/**
@@ -41,18 +51,64 @@ public class FabricKeyBinding extends KeyBinding {
 	}
 
 	public static class Builder {
-		protected final FabricKeyBinding binding;
+		private InputUtil.Type type = InputUtil.Type.KEYSYM;
+		private Identifier id = null;
+		private int code = 0;
+		private String category = KeyCategory.MISC;
 
-		protected Builder(FabricKeyBinding binding) {
-			this.binding = binding;
+		private Builder() { }
+
+		public Builder id(Identifier keyName) {
+			this.id = keyName;
+			return this;
+		}
+
+		public Builder category(String category) {
+			this.category = category;
+			return this;
+		}
+
+		public Builder code(int keyCode) {
+			this.code = keyCode;
+			return this;
+		}
+
+		public Builder type(InputUtil.Type type) {
+			this.type = type;
+			return this;
 		}
 
 		public FabricKeyBinding build() {
-			return binding;
+			Objects.requireNonNull(id, "Keybindings should be created with an identifier.");
+			/*if (code == GLFW.GLFW_KEY_UNKNOWN) {
+				throw new IllegalStateException("Keybingings need a default keycode.");
+			}*/
+			return new FabricKeyBinding(id, type, code, category);
 		}
 
+		public static Builder create() {
+			return new Builder();
+		}
+
+		/**
+		 * @deprecated Prefer using the builder itself.
+		 * <pre><code>
+		 * FabricKeyBinding.Builder builder = new FabricKeyBinding.Builder();
+		 * FabricKeyBinding left = builder
+		 *                            .id(new identifier("example", "left"))
+		 *                            .code(Keys.Left)
+		 *                            .build();
+		 * FabricKeyBinding right = builder
+		 *                            .id(new identifier("example", "right"))
+		 *                            .code(Keys.Right)
+		 *                            .build();
+		 * KeyBindingRegistry.register(left);
+		 * KeyBindingRegistry.register(right);
+		 * </code></pre>
+		 */
+		@Deprecated
 		public static Builder create(Identifier id, InputUtil.Type type, int code, String category) {
-			return new Builder(new FabricKeyBinding(id, type, code, category));
+			return new Builder().id(id).type(type).code(code).category(category);
 		}
 	}
 }

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "fabric-dimensions-v1",
+  "version": "${version}",
+  "license": "Apache-2.0",
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "fabric-api-base": "*"
+  },
+  "mixins": [
+    "fabric-dimensions-v1.mixins.json"
+  ],
+  "name": "Fabric Dimensions (v1)",
+  "description": "Hooks for custom dimensions",
+  "contact": {
+    "homepage": "https://fabricmc.net",
+    "irc": "irc://irc.esper.net:6667/fabric",
+    "issues": "https://github.com/FabricMC/fabric/issues",
+    "sources": "https://github.com/FabricMC/fabric"
+  },
+  "custom": {
+    "modmenu:parent": "fabric"
+  }
+}

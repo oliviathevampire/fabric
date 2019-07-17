@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "fabric-brewing-v1",
+  "version": "${version}",
+  "license": "Apache-2.0",
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "fabric-api-base": "*",
+    "fabric-resource-loader-v0": "*"
+  },
+  "mixins": [
+    "fabric-brewing-v1.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "net.fabricmc.fabric.impl.brewing.FabricBrewingInit"
+    ]
+  },
+  "name": "Fabric Brewing (v1)",
+  "description": "Adds brewing-related hooks.",
+  "contact": {
+    "homepage": "https://fabricmc.net",
+    "irc": "irc://irc.esper.net:6667/fabric",
+    "issues": "https://github.com/FabricMC/fabric/issues",
+    "sources": "https://github.com/FabricMC/fabric"
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "fabric"
+  }
+}

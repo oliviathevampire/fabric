@@ -46,7 +46,7 @@ public class FabricEntityTypeBuilder<T extends Entity> {
 	private boolean immuneToFire = false;
 	private EntityDimensions size = EntityDimensions.changing(-1.0f, -1.0f);
 
-	protected FabricEntityTypeBuilder(EntityCategory category, EntityType.EntityFactory<T> function) {
+	private FabricEntityTypeBuilder(EntityCategory category, EntityType.EntityFactory<T> function) {
 		this.category = category;
 		this.function = function;
 	}
@@ -83,15 +83,15 @@ public class FabricEntityTypeBuilder<T extends Entity> {
 	}
 
 	/**
-	 * @deprecated Use {@link FabricEntityTypeBuilder#size(EntityDimensions)}
+	 * @deprecated Use {@link FabricEntityTypeBuilder#dimensions(EntityDimensions)}
 	 */
 	@Deprecated
-	public FabricEntityTypeBuilder<T> size(float width, float height) {
+	public FabricEntityTypeBuilder<T> dimensions(float width, float height) {
 		this.size = EntityDimensions.changing(width, height);
 		return this;
 	}
 
-	public FabricEntityTypeBuilder<T> size(EntityDimensions size) {
+	public FabricEntityTypeBuilder<T> dimensions(EntityDimensions size) {
 		this.size = size;
 		return this;
 	}
@@ -108,13 +108,7 @@ public class FabricEntityTypeBuilder<T extends Entity> {
 	}
 
 	public EntityType<T> build() {
-		if (this.saveable) {
-			// SNIP! Modded datafixers are not supported anyway.
-			// TODO: Flesh out once modded datafixers exist.
-		}
-
-		EntityType<T> type = new FabricEntityType<T>(this.function, this.category, this.saveable, this.summonable, this.immuneToFire, null, size, trackingDistance, updateIntervalTicks, alwaysUpdateVelocity);
-
-		return type;
+		boolean figureMeOut1 = this.category == EntityCategory.CREATURE || this.category == EntityCategory.MISC; // TODO
+		return new FabricEntityType<T>(this.function, this.category, this.saveable, this.summonable, this.immuneToFire, figureMeOut1, size, trackingDistance, updateIntervalTicks, alwaysUpdateVelocity);
 	}
 }

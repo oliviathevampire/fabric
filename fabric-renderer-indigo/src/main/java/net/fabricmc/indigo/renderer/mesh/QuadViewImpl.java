@@ -16,18 +16,6 @@
 
 package net.fabricmc.indigo.renderer.mesh;
 
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.HEADER_BITS;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.HEADER_COLOR_INDEX;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.HEADER_MATERIAL;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.HEADER_TAG;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.NORMALS_OFFSET;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.SECOND_TEXTURE_OFFSET;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.TEXTURE_OFFSET_MINUS;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.TEXTURE_STRIDE;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.THIRD_TEXTURE_OFFSET;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.VANILLA_STRIDE;
-import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.VERTEX_START_OFFSET;
-
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadView;
 import net.fabricmc.indigo.renderer.RenderMaterialImpl;
@@ -35,6 +23,8 @@ import net.fabricmc.indigo.renderer.helper.GeometryHelper;
 import net.fabricmc.indigo.renderer.helper.NormalHelper;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Direction;
+
+import static net.fabricmc.indigo.renderer.mesh.EncodingFormat.*;
 
 /**
  * Base class for all quads / quad makers. Handles the ugly bits
@@ -248,7 +238,7 @@ public class QuadViewImpl implements QuadView {
         System.arraycopy(data, baseIndex + 1, quad.data, quad.baseIndex + 1, len - 1);
         quad.isFaceNormalInvalid = this.isFaceNormalInvalid;
         if(!this.isFaceNormalInvalid) {
-            quad.faceNormal.set(this.faceNormal.x(), this.faceNormal.y(), this.faceNormal.z());
+            quad.faceNormal.set(this.faceNormal.getX(), this.faceNormal.getY(), this.faceNormal.getZ());
         }
         quad.lightFace = this.lightFace;
         quad.colorIndex = this.colorIndex;

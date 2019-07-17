@@ -11,8 +11,7 @@
     "MixinBufferBuilder",
 	"MixinChunkRenderer",
     "MixinChunkRendererRegion",
-	"MixinChunkRenderTask",
-	"MixinItemRenderer"
+	"MixinChunkRenderTask"
   ],
   "injectors": {
     "defaultRequire": 1

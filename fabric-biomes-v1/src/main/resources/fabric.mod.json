@@ -7,12 +7,23 @@
   "license": "Apache-2.0",
   
   "environment": "*",
-  
   "depends": {
     "fabricloader": ">=0.4.0"
   },
-  
+
   "mixins": [
     "fabric-biomes-v1.mixins.json"
-  ]
+  ],
+  "name": "Fabric Biomes (v1)",
+  "description": "Adds an api for custom biomes",
+  "contact": {
+    "homepage": "https://fabricmc.net",
+    "irc": "irc://irc.esper.net:6667/fabric",
+    "issues": "https://github.com/FabricMC/fabric/issues",
+    "sources": "https://github.com/FabricMC/fabric"
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "fabric"
+  }
 }

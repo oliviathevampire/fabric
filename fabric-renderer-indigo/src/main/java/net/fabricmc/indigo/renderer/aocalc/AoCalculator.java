@@ -16,28 +16,12 @@
 
 package net.fabricmc.indigo.renderer.aocalc;
 
-import static java.lang.Math.max;
-import static net.fabricmc.indigo.renderer.helper.GeometryHelper.AXIS_ALIGNED_FLAG;
-import static net.fabricmc.indigo.renderer.helper.GeometryHelper.CUBIC_FLAG;
-import static net.fabricmc.indigo.renderer.helper.GeometryHelper.LIGHT_FACE_FLAG;
-import static net.minecraft.util.math.Direction.DOWN;
-import static net.minecraft.util.math.Direction.EAST;
-import static net.minecraft.util.math.Direction.NORTH;
-import static net.minecraft.util.math.Direction.SOUTH;
-import static net.minecraft.util.math.Direction.UP;
-import static net.minecraft.util.math.Direction.WEST;
-
-import java.util.function.ToIntBiFunction;
-
-import net.fabricmc.indigo.Indigo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.indigo.renderer.mesh.QuadViewImpl;
+import net.fabricmc.indigo.Indigo;
 import net.fabricmc.indigo.renderer.aocalc.AoFace.WeightFunction;
 import net.fabricmc.indigo.renderer.mesh.MutableQuadViewImpl;
+import net.fabricmc.indigo.renderer.mesh.QuadViewImpl;
 import net.fabricmc.indigo.renderer.render.BlockRenderInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -47,6 +31,14 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.ExtendedBlockView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.function.ToIntBiFunction;
+
+import static java.lang.Math.max;
+import static net.fabricmc.indigo.renderer.helper.GeometryHelper.*;
+import static net.minecraft.util.math.Direction.*;
 
 /**
  * Adaptation of inner, non-static class in BlockModelRenderer that serves same purpose.
@@ -271,7 +263,7 @@ public class AoCalculator {
             float ao = 0, sky = 0, block = 0, maxAo = 0;
             int maxSky = 0, maxBlock = 0;
             
-            final float x = normal.x();
+            final float x = normal.getX();
             if(!MathHelper.equalsApproximate(0f, x)) {
                 final Direction face = x > 0 ? Direction.EAST : Direction.WEST;
                 final AoFaceData fd = gatherInsetFace(quad, i, face);
@@ -288,7 +280,7 @@ public class AoCalculator {
                 maxBlock = b;
             }
             
-            final float y = normal.y();
+            final float y = normal.getY();
             if(!MathHelper.equalsApproximate(0f, y)) {
                 final Direction face = y > 0 ? Direction.UP: Direction.DOWN;
                 final AoFaceData fd = gatherInsetFace(quad, i, face);
@@ -305,7 +297,7 @@ public class AoCalculator {
                 maxBlock = Math.max(maxBlock, b);
             }
             
-            final float z = normal.z();
+            final float z = normal.getZ();
             if(!MathHelper.equalsApproximate(0f, z)) {
                 final Direction face = z > 0 ? Direction.SOUTH: Direction.NORTH;
                 final AoFaceData fd = gatherInsetFace(quad, i, face);
