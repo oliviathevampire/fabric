@@ -6,9 +6,7 @@
     "CustomPayloadC2SPacketAccessor",
     "LoginQueryRequestS2CPacketAccessor",
     "LoginQueryResponseC2SPacketAccessor",
-    "MixinPlayerManager",
-    "MixinServerLoginNetworkHandler",
-    "MixinServerPlayNetworkHandler"
+    "MixinPlayerManager"
   ],
   "client": [
     "MixinClientLoginNetworkHandler",

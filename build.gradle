@@ -46,7 +46,7 @@ allprojects {
 	dependencies {
 		minecraft "com.mojang:minecraft:$Globals.mcVersion"
 		mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}"
-		modCompile "net.fabricmc:fabric-loader:0.4.8+build.155"
+		modCompile "net.fabricmc:fabric-loader:0.4.8+local"
 		modCompile "io.github.prospector.modmenu:ModMenu:+"
 	}
 
