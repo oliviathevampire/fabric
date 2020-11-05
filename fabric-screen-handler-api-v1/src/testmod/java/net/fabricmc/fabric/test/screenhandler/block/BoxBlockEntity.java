@@ -16,6 +16,7 @@
 
 package net.fabricmc.fabric.test.screenhandler.block;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -29,12 +30,13 @@ import net.minecraft.util.collection.DefaultedList;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.test.screenhandler.ScreenHandlerTest;
 import net.fabricmc.fabric.test.screenhandler.screen.BoxScreenHandler;
+import net.minecraft.util.math.BlockPos;
 
 public class BoxBlockEntity extends LootableContainerBlockEntity implements ExtendedScreenHandlerFactory {
 	private DefaultedList<ItemStack> items = DefaultedList.ofSize(size(), ItemStack.EMPTY);
 
-	public BoxBlockEntity() {
-		super(ScreenHandlerTest.BOX_ENTITY);
+	public BoxBlockEntity(BlockPos pos, BlockState state) {
+		super(ScreenHandlerTest.BOX_ENTITY, pos, state);
 	}
 
 	@Override
