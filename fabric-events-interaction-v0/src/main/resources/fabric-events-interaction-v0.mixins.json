@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.fabricmc.fabric.mixin.event.interaction",
+  "package": "net.fabricmc.fabric.mixin.enchantment.interaction",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinServerPlayerEntity",

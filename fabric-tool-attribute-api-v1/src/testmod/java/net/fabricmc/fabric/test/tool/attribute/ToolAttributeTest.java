@@ -16,24 +16,6 @@
 
 package net.fabricmc.fabric.test.tool.attribute;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.Material;
-import net.minecraft.block.MaterialColor;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.ToolItem;
-import net.minecraft.item.ToolMaterials;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.tag.Tag;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -41,6 +23,14 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricMaterialBuilder;
 import net.fabricmc.fabric.api.tag.TagRegistry;
 import net.fabricmc.fabric.api.tool.attribute.v1.DynamicAttributeTool;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
+import net.minecraft.block.*;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.*;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.tag.Tag;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public class ToolAttributeTest implements ModInitializer {
 	private static final float DEFAULT_BREAK_SPEED = 1.0F;
@@ -69,7 +59,7 @@ public class ToolAttributeTest implements ModInitializer {
 		testPickaxe = Registry.register(Registry.ITEM, new Identifier("fabric-tool-attribute-api-v1-testmod", "test_pickaxe"), new TestTool(new Item.Settings(), FabricToolTags.PICKAXES, 2));
 		// Register a block that requires a shovel that is as strong or stronger than an iron one.
 		gravelBlock = Registry.register(Registry.BLOCK, new Identifier("fabric-tool-attribute-api-v1-testmod", "hardened_gravel_block"),
-				new Block(FabricBlockSettings.of(new FabricMaterialBuilder(MaterialColor.SAND).build(), MaterialColor.STONE)
+				new Block(FabricBlockSettings.of(new FabricMaterialBuilder(MapColor.SAND).build(), MapColor.STONE)
 						.breakByTool(FabricToolTags.SHOVELS, 2)
 						.requiresTool()
 						.strength(0.6F)
@@ -77,7 +67,7 @@ public class ToolAttributeTest implements ModInitializer {
 		Registry.register(Registry.ITEM, new Identifier("fabric-tool-attribute-api-v1-testmod", "hardened_gravel_block"), new BlockItem(gravelBlock, new Item.Settings()));
 		// Register a block that requires a pickaxe that is as strong or stronger than an iron one.
 		stoneBlock = Registry.register(Registry.BLOCK, new Identifier("fabric-tool-attribute-api-v1-testmod", "hardened_stone_block"),
-				new Block(FabricBlockSettings.of(Material.STONE, MaterialColor.STONE)
+				new Block(FabricBlockSettings.of(Material.STONE, MapColor.STONE)
 						.breakByTool(FabricToolTags.PICKAXES, 2)
 						.requiresTool()
 						.strength(0.6F)
@@ -94,7 +84,7 @@ public class ToolAttributeTest implements ModInitializer {
 		testDiamondDynamicLevelTater = Registry.register(Registry.ITEM, new Identifier("fabric-tool-attribute-api-v1-testmod", "test_diamond_dynamic_level_tater"), new TestTool(new Item.Settings(), TATER, 3));
 
 		taterEffectiveBlock = Registry.register(Registry.BLOCK, new Identifier("fabric-tool-attribute-api-v1-testmod", "tater_effective_block"),
-				new Block(FabricBlockSettings.of(Material.ORGANIC_PRODUCT, MaterialColor.ORANGE)
+				new Block(FabricBlockSettings.of(Material.ORGANIC_PRODUCT, MapColor.ORANGE)
 						.breakByTool(TATER, 2) // requires iron tater
 						.requiresTool()
 						.strength(0.6F)

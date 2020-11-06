@@ -16,17 +16,10 @@
 
 package net.fabricmc.fabric.mixin.client.renderer.registry;
 
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
+import net.fabricmc.fabric.api.client.rendereregistry.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.impl.client.renderer.registry.EntityRendererRegistryImpl;
+import net.fabricmc.fabric.impl.client.renderer.registry.RegistrationHelperImpl;
 import net.minecraft.class_5617;
 import net.minecraft.class_5619;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -35,10 +28,15 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.fabricmc.fabric.api.client.rendereregistry.v1.LivingEntityFeatureRendererRegistrationCallback;
-import net.fabricmc.fabric.impl.client.renderer.registry.RegistrationHelperImpl;
-import net.fabricmc.fabric.impl.client.renderer.registry.EntityRendererRegistryImpl;
+import java.util.Map;
 
 @Mixin(class_5619.class)
 public abstract class MixinEntityRenderers {
@@ -66,6 +64,7 @@ public abstract class MixinEntityRenderers {
 		return entityRenderer;
 	}
 
+	// private static synthetic method_32175(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/class_5617$class_5618;Ljava/lang/String;Lnet/minecraft/class_5617;)V
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Redirect(method = "method_32175", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_5617;create(Lnet/minecraft/class_5617$class_5618;)Lnet/minecraft/client/render/entity/EntityRenderer;"))
 	private static EntityRenderer<? extends PlayerEntity> createPlayerEntityRenderer(class_5617<AbstractClientPlayerEntity> playerEntityRendererFactory, class_5617.class_5618 context, ImmutableMap.Builder builder, class_5617.class_5618 context2, String str, class_5617<AbstractClientPlayerEntity> playerEntityRendererFactory2) {

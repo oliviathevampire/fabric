@@ -16,13 +16,12 @@
 
 package net.fabricmc.fabric.api.object.builder.v1.block;
 
-import java.util.function.ToIntFunction;
-
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
-import net.minecraft.block.MaterialColor;
+import net.fabricmc.fabric.impl.object.builder.BlockSettingsInternals;
+import net.fabricmc.fabric.impl.object.builder.FabricBlockInternals;
+import net.fabricmc.fabric.mixin.object.builder.AbstractBlockAccessor;
+import net.fabricmc.fabric.mixin.object.builder.AbstractBlockSettingsAccessor;
+import net.minecraft.block.*;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.sound.BlockSoundGroup;
@@ -30,10 +29,7 @@ import net.minecraft.tag.Tag;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.fabric.impl.object.builder.BlockSettingsInternals;
-import net.fabricmc.fabric.impl.object.builder.FabricBlockInternals;
-import net.fabricmc.fabric.mixin.object.builder.AbstractBlockAccessor;
-import net.fabricmc.fabric.mixin.object.builder.AbstractBlockSettingsAccessor;
+import java.util.function.ToIntFunction;
 
 /**
  * Fabric's version of Block.Settings. Adds additional methods and hooks
@@ -43,12 +39,12 @@ import net.fabricmc.fabric.mixin.object.builder.AbstractBlockSettingsAccessor;
  * FabricBlockSettings.of().
  */
 public class FabricBlockSettings extends AbstractBlock.Settings {
-	protected FabricBlockSettings(Material material, MaterialColor color) {
+	protected FabricBlockSettings(Material material, MapColor color) {
 		super(material, color);
 	}
 
 	protected FabricBlockSettings(AbstractBlock.Settings settings) {
-		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMaterialColorFactory());
+		super(((AbstractBlockSettingsAccessor) settings).getMaterial(), ((AbstractBlockSettingsAccessor) settings).getMapColorProvider());
 		// Mostly Copied from vanilla's copy method
 		// Note: If new methods are added to Block settings, an accessor must be added here
 		AbstractBlockSettingsAccessor thisAccessor = (AbstractBlockSettingsAccessor) this;
@@ -60,7 +56,7 @@ public class FabricBlockSettings extends AbstractBlock.Settings {
 		this.collidable(otherAccessor.getCollidable());
 		thisAccessor.setRandomTicks(otherAccessor.getRandomTicks());
 		this.luminance(otherAccessor.getLuminance());
-		thisAccessor.setMaterialColorFactory(otherAccessor.getMaterialColorFactory());
+		thisAccessor.setMapColorProvider(otherAccessor.getMapColorProvider());
 		this.sounds(otherAccessor.getSoundGroup());
 		this.slipperiness(otherAccessor.getSlipperiness());
 		this.velocityMultiplier(otherAccessor.getVelocityMultiplier());
@@ -82,12 +78,12 @@ public class FabricBlockSettings extends AbstractBlock.Settings {
 		return of(material, material.getColor());
 	}
 
-	public static FabricBlockSettings of(Material material, MaterialColor color) {
+	public static FabricBlockSettings of(Material material, MapColor color) {
 		return new FabricBlockSettings(material, color);
 	}
 
 	public static FabricBlockSettings of(Material material, DyeColor color) {
-		return new FabricBlockSettings(material, color.getMaterialColor());
+		return new FabricBlockSettings(material, color.getMapColor());
 	}
 
 	public static FabricBlockSettings copyOf(AbstractBlock block) {
@@ -272,13 +268,29 @@ public class FabricBlockSettings extends AbstractBlock.Settings {
 
 	/* FABRIC DELEGATE WRAPPERS */
 
-	public FabricBlockSettings materialColor(MaterialColor color) {
-		((AbstractBlockSettingsAccessor) this).setMaterialColorFactory(ignored -> color);
+	/**
+	 * @deprecated Please migrate to {@link FabricBlockSettings#mapColor(MapColor)}
+	 */
+	@Deprecated
+	public FabricBlockSettings materialColor(MapColor color) {
+		return this.mapColor(color);
+	}
+
+	/**
+	 * @deprecated Please migrate to {@link FabricBlockSettings#mapColor(DyeColor)}
+	 */
+	@Deprecated
+	public FabricBlockSettings materialColor(DyeColor color) {
+		return this.mapColor(color);
+	}
+
+	public FabricBlockSettings mapColor(MapColor color) {
+		((AbstractBlockSettingsAccessor) this).setMapColorProvider(ignored -> color);
 		return this;
 	}
 
-	public FabricBlockSettings materialColor(DyeColor color) {
-		return this.materialColor(color.getMaterialColor());
+	public FabricBlockSettings mapColor(DyeColor color) {
+		return this.mapColor(color.getMapColor());
 	}
 
 	public FabricBlockSettings collidable(boolean collidable) {
@@ -312,4 +324,33 @@ public class FabricBlockSettings extends AbstractBlock.Settings {
 	public FabricBlockSettings breakByTool(Tag<Item> tag) {
 		return this.breakByTool(tag, 0);
 	}
+
+
+	/**
+	 * Sets the piston behavior of the block, if not set it defaults to the value of
+	 * {@link Material#getPistonBehavior()} for the block's material.
+	 */
+	public FabricBlockSettings pistonBehavior(PistonBehavior pistonBehavior) {
+		FabricBlockInternals.computeExtraData(this).setPistonBehavior(pistonBehavior);
+		return this;
+	}
+
+	/**
+	 * Sets whether the block is replaceable, if not set it defaults to the value of {@link Material#isReplaceable()}
+	 * for the block's material.
+	 */
+	public FabricBlockSettings replaceable(boolean replaceable) {
+		FabricBlockInternals.computeExtraData(this).setReplaceable(replaceable);
+		return this;
+	}
+
+	/**
+	 * Sets whether the block is solid, if not set it defaults to the value of {@link Material#isSolid()} for the
+	 * block's material.
+	 */
+	public FabricBlockSettings solid(boolean solid) {
+		FabricBlockInternals.computeExtraData(this).setSolid(solid);
+		return this;
+	}
+
 }

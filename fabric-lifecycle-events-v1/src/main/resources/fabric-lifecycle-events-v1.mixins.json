@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "net.fabricmc.fabric.mixin.event.lifecycle",
+  "package": "net.fabricmc.fabric.mixin.enchantment.lifecycle",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MinecraftServerMixin",
@@ -13,6 +13,7 @@
     "client.ClientChunkManagerMixin",
     "client.ClientPlayNetworkHandlerMixin",
     "client.ClientWorldMixin",
+    "client.ClientWorldEntityLoaderMixin",
     "client.MinecraftClientMixin"
   ],
   "injectors": {

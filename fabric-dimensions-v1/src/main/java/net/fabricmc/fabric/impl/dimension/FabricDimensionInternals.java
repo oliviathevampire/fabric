@@ -16,116 +16,70 @@
 
 package net.fabricmc.fabric.impl.dimension;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.base.Preconditions;
-
-import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.dimension.DimensionOptions;
+import net.minecraft.world.dimension.DimensionType;
 
-import net.fabricmc.fabric.api.dimension.v1.EntityPlacer;
-import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
-import net.fabricmc.fabric.mixin.dimension.EntityHooks;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class FabricDimensionInternals {
+	/**
+	 * The set of dimension types that were explicitly declared by mods to be stable.
+	 */
+	private static final Set<RegistryKey<DimensionType>> stableDimensionTypes = new HashSet<>();
+
+	/**
+	 * The set of dimensions that were explicitly declared by mods to be stable.
+	 */
+	private static final Set<RegistryKey<DimensionOptions>> stableDimensions = new HashSet<>();
+
+	/**
+	 * The target passed to the last call to {@link net.fabricmc.fabric.api.dimension.v1.FabricDimensions#teleport(Entity, ServerWorld, TeleportTarget)}.
+	 */
+	private static TeleportTarget currentTarget;
+
 	private FabricDimensionInternals() {
 		throw new AssertionError();
 	}
 
-	public static final Map<RegistryKey<World>, EntityPlacer> DEFAULT_PLACERS = new HashMap<>();
-
 	/**
-	 * The entity currently being transported to another dimension.
+	 * Returns the last target set when a user of the API requested teleportation, or null.
 	 */
-	private static final ThreadLocal<Entity> PORTAL_ENTITY = new ThreadLocal<>();
-	/**
-	 * The custom placement logic passed from {@link FabricDimensions#teleport(Entity, ServerWorld, EntityPlacer)}.
-	 */
-	private static EntityPlacer customPlacement;
-
-	/*
-	 * The dimension change hooks consist of two steps:
-	 * - First, we memorize the currently teleported entity, and set required fields
-	 * - Then, we retrieve the teleported entity in the placement logic in PortalForcer#getPortal
-	 *   and use it to call the entity placers
-	 * This lets us use the exact same logic for any entity and prevent the vanilla getPortal (which has unwanted
-	 * side effects) from running, while keeping the patches minimally invasive.
-	 *
-	 * Shortcomings: bugs may arise if another patch cancels the teleportation method between
-	 * #prepareDimensionalTeleportation and #tryFindPlacement, AND a mod calls PortalForcer#getPortal directly
-	 * right after.
-	 */
-
-	public static void prepareDimensionalTeleportation(Entity entity) {
-		Preconditions.checkNotNull(entity);
-		PORTAL_ENTITY.set(entity);
-
-		// Set values used by `PortalForcer#changeDimension` to prevent a NPE crash.
-		EntityHooks access = ((EntityHooks) entity);
-
-		if (entity.getLastNetherPortalDirectionVector() == null) {
-			access.setLastNetherPortalDirectionVector(entity.getRotationVector());
-		}
-
-		if (entity.getLastNetherPortalDirection() == null) {
-			access.setLastNetherPortalDirection(entity.getHorizontalFacing());
-		}
+	public static TeleportTarget getCustomTarget() {
+		return currentTarget;
 	}
 
-	/* Nullable */
-	public static BlockPattern.TeleportTarget tryFindPlacement(ServerWorld destination, Direction portalDir, double portalX, double portalY) {
-		Preconditions.checkNotNull(destination);
-		Entity teleported = PORTAL_ENTITY.get();
-		PORTAL_ENTITY.set(null);
+	public static void addStableDimensionType(RegistryKey<DimensionType> key) {
+		stableDimensionTypes.add(key);
+	}
 
-		// If the entity is null, the call does not come from a vanilla context
-		if (teleported == null) {
-			return null;
-		}
+	public static void addStableDimension(RegistryKey<DimensionOptions> key) {
+		stableDimensions.add(key);
+	}
 
-		// Custom placement logic, falls back to default dimension placement if no placement or target found
-		EntityPlacer customPlacement = FabricDimensionInternals.customPlacement;
+	public static boolean isStableModdedDimension(RegistryKey<DimensionOptions> key) {
+		return stableDimensions.contains(key);
+	}
 
-		if (customPlacement != null) {
-			BlockPattern.TeleportTarget customTarget = customPlacement.placeEntity(teleported, destination, portalDir, portalX, portalY);
-
-			if (customTarget != null) {
-				return customTarget;
-			}
-		}
-
-		// Default placement logic, falls back to vanilla if not a fabric dimension
-		RegistryKey<World> registryKey = destination.getRegistryKey();
-
-		if (DEFAULT_PLACERS.containsKey(registryKey)) {
-			BlockPattern.TeleportTarget defaultTarget = DEFAULT_PLACERS.get(registryKey).placeEntity(teleported, destination, portalDir, portalX, portalY);
-
-			if (defaultTarget == null) {
-				throw new IllegalStateException("Mod dimension " + destination.getRegistryKey().getValue().toString() + " returned an invalid teleport target");
-			}
-
-			return defaultTarget;
-		}
-
-		// Vanilla / other implementations logic, undefined behaviour on custom dimensions
-		return null;
+	public static boolean isStableModdedDimensionType(RegistryKey<DimensionType> key) {
+		return stableDimensionTypes.contains(key);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Entity> E changeDimension(E teleported, ServerWorld dimension, EntityPlacer placement) {
-		assert !teleported.world.isClient : "Entities can only be teleported on the server side";
-		assert Thread.currentThread() == ((ServerWorld) teleported.world).getServer().getThread() : "Entities must be teleported from the main server thread";
+	public static <E extends Entity> E changeDimension(E teleported, ServerWorld dimension, TeleportTarget target) {
+		Preconditions.checkArgument(!teleported.world.isClient, "Entities can only be teleported on the server side");
+		Preconditions.checkArgument(Thread.currentThread() == ((ServerWorld) teleported.world).getServer().getThread(), "Entities must be teleported from the main server thread");
 
 		try {
-			customPlacement = placement;
-			return (E) teleported.changeDimension(dimension);
+			currentTarget = target;
+			return (E) teleported.moveToWorld(dimension);
 		} finally {
-			customPlacement = null;
+			currentTarget = null;
 		}
 	}
 }

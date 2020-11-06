@@ -16,16 +16,18 @@
 
 package net.fabricmc.fabric.impl.event.interaction;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.block.BlockState;
-import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockPlaceEvents;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class InteractionEventsRouter implements ModInitializer {
 	@Override
@@ -46,12 +48,20 @@ public class InteractionEventsRouter implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		/*
-		* This code is for telling the client that the block wasn't actually broken.
-		* This covers a 3x3 area due to how vanilla redstone handles updates, as it considers
-		* important functions like quasi-connectivity and redstone dust logic
-		 */
-		PlayerBlockBreakEvents.CANCELED.register(((world, player, pos, state, blockEntity) -> {
+
+		PlayerBlockBreakEvents.CANCELED.register(((world, player, pos, state, blockEntity) -> onCanceled(world, player, pos, state)));
+		PlayerBlockPlaceEvents.CANCELED.register(InteractionEventsRouter::onCanceled);
+	}
+
+	/*
+	 * This code is for telling the client that the block wasn't actually changed.
+	 * This covers a 3x3 area due to how vanilla redstone handles updates, as it considers
+	 * important functions like quasi-connectivity and redstone dust logic.
+	 *
+	 * This also stops clients executing this
+	 */
+	private static void onCanceled(World world, PlayerEntity player, BlockPos pos, BlockState state) {
+		if (player instanceof ServerPlayerEntity) {
 			BlockPos cornerPos = pos.add(-1, -1, -1);
 
 			for (int x = 0; x < 3; x++) {
@@ -61,6 +71,6 @@ public class InteractionEventsRouter implements ModInitializer {
 					}
 				}
 			}
-		}));
+		}
 	}
 }

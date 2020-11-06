@@ -6,11 +6,10 @@
   "environment": "*",
   "license": "Apache-2.0",
   "depends": {
+    "fabric-resource-loader-v0": "*",
     "fabric-dimensions-v1": "*"
   },
   "entrypoints": {
-    "main": [
-      "net.fabricmc.fabric.test.dimension.FabricDimensionTest"
-    ]
+    "main": []
   }
 }
