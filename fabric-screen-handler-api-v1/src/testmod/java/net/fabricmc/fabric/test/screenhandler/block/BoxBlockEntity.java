@@ -26,6 +26,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.test.screenhandler.ScreenHandlerTest;
@@ -35,8 +36,8 @@ import net.minecraft.util.math.BlockPos;
 public class BoxBlockEntity extends LootableContainerBlockEntity implements ExtendedScreenHandlerFactory {
 	private DefaultedList<ItemStack> items = DefaultedList.ofSize(size(), ItemStack.EMPTY);
 
-	public BoxBlockEntity(BlockPos pos, BlockState state) {
-		super(ScreenHandlerTest.BOX_ENTITY, pos, state);
+	public BoxBlockEntity(BlockPos blockPos, BlockState blockState) {
+		super(ScreenHandlerTest.BOX_ENTITY, blockPos, blockState);
 	}
 
 	@Override

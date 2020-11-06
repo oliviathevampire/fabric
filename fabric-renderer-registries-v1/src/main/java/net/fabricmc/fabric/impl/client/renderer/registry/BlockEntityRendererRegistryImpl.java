@@ -18,13 +18,10 @@ package net.fabricmc.fabric.impl.client.renderer.registry;
 
 import java.util.HashMap;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.class_5614;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 

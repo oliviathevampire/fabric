@@ -29,7 +29,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class BoxBlock extends BlockWithEntity {
@@ -51,8 +50,8 @@ public class BoxBlock extends BlockWithEntity {
 	}
 
 	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return new BoxBlockEntity(pos, state);
+	public BlockEntity createBlockEntity(BlockPos blockPos, BlockState blockState) {
+		return new BoxBlockEntity(blockPos, blockState);
 	}
 
 	@Override
